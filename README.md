@@ -1,34 +1,29 @@
-# mongoose-seeder
+# mais-mongoose-seeder
 
-[![Build Status](https://travis-ci.org/SamVerschueren/mongoose-seeder.svg?branch=master)](https://travis-ci.org/SamVerschueren/mongoose-seeder)
-[![Coverage Status](https://coveralls.io/repos/SamVerschueren/mongoose-seeder/badge.svg?branch=master&service=github)](https://coveralls.io/github/SamVerschueren/mongoose-seeder?branch=master)
+Этот пакет создан мной в академических целях на основе пакета Sam Verschueren's [mongoose-seeder](https://github.com/SamVerschueren/mongoose-seeder). Так случилось, что мне приходится использовать именно пакет Сэма, но он не работает с текущей версией mongoose. Я решил его переписать так, чтобы это работало с большинством версий mongoose так, как это надо пользователям. А заодно убрал все зависимости из пакета для того, чтобы при установке такой ерунды вам не ставилось половина npm заодно с этим.
 
--
-
-<p align="center">👷 <a href="https://github.com/SamVerschueren/mongoose-seeder/issues/12">Looking for a maintainer</a> 👷</p>
-
--
-
-When testing an application, you always want to start with the same database. It is a lot of work to manually create
-dummy data and link them together. When you want extra data to test with, you'll have to create your mongoose objects
-manually in the ```before``` method of the entire testsuite.
+### Спасибо Сэму за его работу! В 2015 он написал прекрасный пакет. 
+Я ни в коем случае не претендую на авторство, так как то что я сделал это по сути просто рефакторинг. Но я вылаживаю этот пакет в открытый доступ на тот случай, если ещё перед кем то будет стоять необходимость использовать пакет mongoose-seeder.
 
 This library offers a nice, clean and elegant solution that will create the dummy data objects from a JSON file.
 
 ## Install
 
 ```
-npm install mongoose-seeder
+npm install mais-mongoose-seeder
 ```
 
 ## How to use
 
-```JavaScript
+```js
 var mongoose = require("mongoose");
 // ...
 var seeder = require('mongoose-seeder')(mongoose),
     data = require('./data.json');
-
+// подключаете все модели к mongoose
+// делаете все что вам надо
+// и когда придет время для подгрузки тестовых данных
+// пишете
 seeder.seed(data).then(function(dbData) {
     // The database objects are stored in dbData
 }).catch(function(err) {
@@ -36,23 +31,9 @@ seeder.seed(data).then(function(dbData) {
 });
 ```
 
-The ```seed``` function has two options.
-* **data**: The JSON objects that will be used to create the mongo documents.
-* **options**: [optional] Extra options that alter the behaviour. The default behaviour is drop the entire database before seeding it again.
+### Важно
+В отличие от оригинального пакета mongoose-seeder, mais-mongoose-seeder возвращает промис и не принимает коллбэков. Для работы с ним еспользуйте than/catch.
 
-### Callbacks
-
-Although, promises are the preferred way of using the library. It's also possible to use a callback function as extra parameter
-in the seed function.
-
-```JavaScript
-seeder.seed(data, function(err, dbData) {
-    // ...
-})
-```
-
-So actually, the seed function has three options if you want to use it with a callback. You can still provide the extra options
-as second parameter in the seed function.
 
 ### Behaviour
 
@@ -60,35 +41,6 @@ You can also provide extra options that will indicate if the drop strategy. You 
 the entire database before seeding it again. Another option is to only drop the collections that are being seeded. This
 offers the flexibility that you can manually add data to the database that keeps persisted. The third option is to do
 nothing and just add the data to the collections. The default behaviour is to drop the entire database before seeding.
-
-#### Drop database
-
-By setting this property to ```true```, it will drop the entire database before creating the documents again. This
-is the default behaviour. If you set this property to ```false```, it will do nothing and just tries to append the
-documents to the collection.
-
-```JavaScript
-// Drop the entire database (default behaviour)
-seeder.seed(data, {dropDatabase: true}).then(function(dbData) {
-    // ...
-}).catch(function(err) {
-    // handle error
-});
-```
-
-#### Drop collections
-
-By setting this option to ```true```, it will only drop the collections that are being seeded. If you have two collections
-for example, but only one collection is filled by the seeder, only that collection will be dropped.
-
-```JavaScript
-// Drop the entire database (default behaviour)
-seeder.seed(data, {dropCollections: true}).then(function(dbData) {
-    // ...
-}).catch(function(err) {
-    // handle error
-});
-```
 
 ### .json
 
@@ -131,10 +83,10 @@ will look like this.
 So the foo user can be accessed as following.
 
 ```JavaScript
-// Drop the entire database (default behaviour)
-seeder.seed(data, {dropCollections: true}, function(err, dbData) {
-    var foo = dbData.users.foo;
-});
+    // Drop the entire database (default behaviour)
+    seeder.seed(data, {dropCollections: true}).then(dbData => {
+        var foo = dbData.users.foo;
+    });
 ```
 
 #### References
@@ -244,10 +196,8 @@ adding a list of dependencies.
 If you are using a dependency in your json file, be sure to install it as dependency in your project. If not, it will stop the execution
 and return a ```MODULE_NOT_FOUND``` error in the callback function.
 
-## Contributors
-
-- Sam Verschueren (Author) [<sam.verschueren@gmail.com>]
+## Дополнительную информацию вы можете получить на странице оригинального проекта [mongoose-seeder](https://github.com/SamVerschueren/mongoose-seeder)
 
 ## License
 
-MIT © Sam Verschueren
+MIT © Max Eremin
