@@ -198,6 +198,13 @@ and return a ```MODULE_NOT_FOUND``` error in the callback function.
 
 ## Дополнительную информацию вы можете получить на странице оригинального проекта [mongoose-seeder](https://github.com/SamVerschueren/mongoose-seeder)
 
+
+## Contributors
+
+- Sam Verschueren (Author) [<sam.verschueren@gmail.com>]
+- Max Eremin (Support) [<eremin_my@outlook.com>]
+
+
 ## License
 
 MIT © Max Eremin
