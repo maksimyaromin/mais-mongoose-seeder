@@ -1,6 +1,6 @@
 {
   "name": "mais-mongoose-seeder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Seed your MongoDB database easily with mongoose 5.x",
   "main": "index.js",
   "repository": {
