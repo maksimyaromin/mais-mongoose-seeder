@@ -104,8 +104,9 @@ module.exports = mongoose => {
             .catch(err => this.done(err));
     };
     /**
-     * Этот метод загружает в песочницу все зависимости, если они есть. Зависимости определяются
-     * поле _dependencies исходного объекта с данными
+     * This method downloads all dependencies if there are any. 
+     * The dependencies are defined by field _dependencies of the source 
+     * object with data
      * 
      * @param {Object} data The data that should be seeded.
     */
@@ -125,9 +126,9 @@ module.exports = mongoose => {
         }
     };
     /**
-     * Этот метод проводит предварительную обработку объекта. Устанавливает
-     * все зависимости и парсит значения согласно установленным правилам.
-     * Эта логика вынесена в отдельный синхронный метод
+     * This method pre-processes the object. Installs all the 
+     * dependencies and parses the values according to the rules. 
+     * This logic is placed in a separate synchronous method.
      * 
      * @param {Object} data The data that should be seeded.
     */

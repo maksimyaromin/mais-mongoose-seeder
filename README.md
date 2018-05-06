@@ -1,9 +1,9 @@
 # mais-mongoose-seeder
 
-Этот пакет создан мной в академических целях на основе пакета Sam Verschueren's [mongoose-seeder](https://github.com/SamVerschueren/mongoose-seeder). Так случилось, что мне приходится использовать именно пакет Сэма, но он не работает с текущей версией mongoose. Я решил его переписать так, чтобы это работало с большинством версий mongoose так, как это надо пользователям. А заодно убрал все зависимости из пакета для того, чтобы при установке такой ерунды вам не ставилось половина npm заодно с этим.
+I made this package for academic purposes and it is based on Sam Verschueren's [mongoose-seeder](https://github.com/SamVerschueren/mongoose-seeder) package. It happened so that I have use Sam’s package which doesn’t work with current mongoose version. So, I decided to refactor it so that it can work with most mongoose versions as users need. And also, I deleted all the dependencies from the package so that no half npm is installed at the same time. 
 
-### Спасибо Сэму за его работу! В 2015 он написал прекрасный пакет. 
-Я ни в коем случае не претендую на авторство, так как то что я сделал это по сути просто рефакторинг. Но я вылаживаю этот пакет в открытый доступ на тот случай, если ещё перед кем то будет стоять необходимость использовать пакет mongoose-seeder.
+### Thanks to Sam for his great job! He wrote one perfect package in 2015.
+I do not in any way pretend to be authorship, since what I did it is basically just a refactoring. But I post this package in open access in case there is a need for someone else to use the mongoose-seeder package.
 
 This library offers a nice, clean and elegant solution that will create the dummy data objects from a JSON file.
 
@@ -20,10 +20,10 @@ var mongoose = require("mongoose");
 // ...
 var seeder = require('mongoose-seeder')(mongoose),
     data = require('./data.json');
-// подключаете все модели к mongoose
-// делаете все что вам надо
-// и когда придет время для подгрузки тестовых данных
-// пишете
+// connect all models to mongoose
+// do all the things you may need
+// and when there is time for test data download
+// you write
 seeder.seed(data).then(function(dbData) {
     // The database objects are stored in dbData
 }).catch(function(err) {
@@ -31,8 +31,8 @@ seeder.seed(data).then(function(dbData) {
 });
 ```
 
-### Важно
-В отличие от оригинального пакета mongoose-seeder, mais-mongoose-seeder возвращает промис и не принимает коллбэков. Для работы с ним еспользуйте than/catch.
+### Important
+Unlike the original package mongoose-seeder, mais-mongoose-seeder returns promise and do not accept any callbacks. TO work with it use  than/catch.
 
 
 ### Behaviour
@@ -196,7 +196,7 @@ adding a list of dependencies.
 If you are using a dependency in your json file, be sure to install it as dependency in your project. If not, it will stop the execution
 and return a ```MODULE_NOT_FOUND``` error in the callback function.
 
-## Дополнительную информацию вы можете получить на странице оригинального проекта [mongoose-seeder](https://github.com/SamVerschueren/mongoose-seeder)
+## For more detail see the original project [mongoose-seeder](https://github.com/SamVerschueren/mongoose-seeder)
 
 
 ## Contributors
