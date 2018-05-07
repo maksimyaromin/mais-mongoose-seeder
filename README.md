@@ -18,7 +18,7 @@ npm install mais-mongoose-seeder
 ```js
 var mongoose = require("mongoose");
 // ...
-var seeder = require('mongoose-seeder')(mongoose),
+var seeder = require('mais-mongoose-seeder')(mongoose),
     data = require('./data.json');
 // connect all models to mongoose
 // do all the things you may need

@@ -17,6 +17,27 @@ module.exports = mongoose => {
         return JSON.parse(JSON.stringify(obj));
     };
 
+    const asyncSeries = tasks => {
+        if(!(tasks instanceof Array) || tasks.length === 0) {
+            return Promise.reject(new Error(`Please pass tasks array into this function.`));
+        }
+        try {
+            tasks = tasks.reduce((task, nextTask, index) => {
+                if(index === 1) {
+                    task = typeof task === "function"
+                        ? task.call(this, index)
+                        : Promise.resolve(task);
+                }
+                return task.then(() => typeof nextTask === "function"
+                    ? nextTask.call(this, index + 1)
+                    : Promise.resolve(nextTask));
+            });
+        } catch(err) {
+            return Promise.reject(err);
+        }
+        return tasks;
+    };
+
     const Seeder = function({ dropDatabase = true, dropCollections = false }) {
         if(dropCollections === true && dropDatabase === true) {
             // Only one of the two flags can be turned on. If both are true, this means the
@@ -27,7 +48,6 @@ module.exports = mongoose => {
         this.dropDatabase = dropDatabase;
         this.dropCollections = dropCollections;
         this.chunks = {};
-        this.data = {};
         this.sandbox = vm.createContext();
     };
     Seeder.prototype.clearChunks = function() {
@@ -57,10 +77,10 @@ module.exports = mongoose => {
     */
     Seeder.prototype.seed = function(data) {
         this.requireDeps(data);
-        this.parseData(data);
-        const tasks = Object.keys(this.data).map(key => {
+        //this.parseData(data);
+        const tasks = Object.keys(data).map(key => () => {
             this.chunks[key] = {};
-            const value = this.data[key];
+            const value = data[key];
             try {
                 if(!value._model) {
                     // Throw an error if the model could not be found
@@ -81,23 +101,24 @@ module.exports = mongoose => {
                         return Promise.resolve();
                     })
                     .then(() => {
-                        const innerTasks = Object.keys(value).map(innerKey => {
+                        const innerTasks = Object.keys(value).map(innerKey => () => {
                             const modelData = value[innerKey];
+                            const items = this.unwind(modelData);
                             // Create the model
-                            return Model.create(modelData)
+                            return Model.create(items)
                                 .then(result => {
                                     this.chunks[key][innerKey] = result;
                                     return Promise.resolve();
                                 });
                         });
-                        return Promise.all(innerTasks);
+                        return asyncSeries(innerTasks);
                     });
             } catch (err) {
                 // If the model does not exist, stop the execution
                 return Promise.reject(err);
             }
         });
-        return Promise.all(tasks)
+        return asyncSeries(tasks)
             .then(() => {
                 return this.done(null, this.chunks);
             })
@@ -123,27 +144,6 @@ module.exports = mongoose => {
             });
         } catch(err) {
             this.done(err);
-        }
-    };
-    /**
-     * This method pre-processes the object. Installs all the 
-     * dependencies and parses the values according to the rules. 
-     * This logic is placed in a separate synchronous method.
-     * 
-     * @param {Object} data The data that should be seeded.
-    */
-    Seeder.prototype.parseData = function(data) {
-        for (const key in data) {
-            this.data[key] = {};
-            const value = data[key];
-            this.data[key]._model = value._model;
-            // Remove model and unique properties
-            delete value._model;
-            for (const innerKey in value) {
-                const modelData = value[innerKey];
-                const items = this.unwind(modelData);
-                this.data[key][innerKey] = items;
-            };
         }
     };
     /**
@@ -207,7 +207,7 @@ module.exports = mongoose => {
     Seeder.prototype.findReference = function(ref) {
         const keys = ref.split(".");
         let key = keys.shift(),
-            result = this.data[key];
+            result = this.chunks[key];
         if(!result) {
             // If the result does not exist, return an empty
             throw new TypeError(`Could not read property "${key}" from undefined`);
