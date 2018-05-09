@@ -95,7 +95,6 @@ module.exports = mongoose => {
                 return Promise.resolve()
                     .then(() => {
                         if(this.dropCollections) {
-                            console.log(Model.collection.name);
                             // Drop the collection
                             return mongoose.connection.db.listCollections({ name: Model.collection.name }).next()
                                 .then(isExist => {
