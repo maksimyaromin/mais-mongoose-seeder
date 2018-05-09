@@ -76,7 +76,8 @@ module.exports = mongoose => {
      * @param  {Object}   data The data that should be seeded.
     */
     Seeder.prototype.seed = function(data) {
-        this.requireDeps(data);
+        const depsErr = this.requireDeps(data);
+        if(depsErr) { return Promise.reject(depsErr); }
         //this.parseData(data);
         const tasks = Object.keys(data).map(key => () => {
             this.chunks[key] = {};
@@ -94,9 +95,14 @@ module.exports = mongoose => {
                 return Promise.resolve()
                     .then(() => {
                         if(this.dropCollections) {
+                            console.log(Model.collection.name);
                             // Drop the collection
-                            return mongoose.connection
-                                .dropCollection(Model.collection.name);
+                            return mongoose.connection.db.listCollections({ name: Model.collection.name }).next()
+                                .then(isExist => {
+                                    return isExist 
+                                        ? mongoose.connection.dropCollection(Model.collection.name)
+                                        : Promise.resolve();
+                                });
                         }
                         return Promise.resolve();
                     })
@@ -142,8 +148,9 @@ module.exports = mongoose => {
                 if(this.sandbox[key]) { return; }
                 this.sandbox[key] = module.parent.require(value);
             });
+            return;
         } catch(err) {
-            this.done(err);
+            return err;
         }
     };
     /**
