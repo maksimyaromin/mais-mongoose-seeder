@@ -22,6 +22,9 @@ module.exports = mongoose => {
             return Promise.reject(new Error(`Please pass tasks array into this function.`));
         }
         try {
+            if(tasks.length === 1) {
+                return tasks[0].call(this, 1);
+            }
             tasks = tasks.reduce((task, nextTask, index) => {
                 if(index === 1) {
                     task = typeof task === "function"
