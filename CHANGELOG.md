@@ -1,3 +1,6 @@
+## 1.0.7 - 2018-06-12
+    - Fix drop collections operation
+
 ## 1.0.4 - 2018-05-09
     - Fix some issued bugs
 

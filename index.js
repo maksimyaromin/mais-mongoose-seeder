@@ -99,10 +99,12 @@ module.exports = mongoose => {
                     .then(() => {
                         if(this.dropCollections) {
                             // Drop the collection
-                            return mongoose.connection.db.listCollections({ name: Model.collection.name }).next()
-                                .then(isExist => {
-                                    return isExist 
-                                        ? mongoose.connection.dropCollection(Model.collection.name)
+                            return mongoose.connection.db
+                                .listCollections({ name: Model.collection.name }).toArray()
+                                .then(collections => {
+                                    const isExitst = collections.length > 0;
+                                    return isExitst 
+                                        ? mongoose.connection.dropCollection(Model.collection.name) 
                                         : Promise.resolve();
                                 });
                         }
